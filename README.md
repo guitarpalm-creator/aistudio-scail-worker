@@ -11,6 +11,10 @@ La base es `runpod/worker-comfyui:5.10.0-base-cuda12.8.1` (ComfyUI 0.34.0), que 
 
 RunPod vuelve a construir la imagen cada vez que se publica una **release** nueva en GitHub.
 
+## Versiones
+- **v1.0.0:** primera versión.
+- **v1.1.0:** `sitecustomize.py` hace que ComfyUI vea el límite real de RAM del contenedor (antes veía la RAM de toda la máquina, no liberaba memoria y los videos de 15 s morían por OOM).
+
 ## Entrada
 Formato estándar de worker-comfyui:
 

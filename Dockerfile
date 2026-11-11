@@ -12,6 +12,16 @@
 # =====================================================================
 FROM runpod/worker-comfyui:5.10.0-base-cuda12.8.1
 
+# ---------------------------------------------------------------------
+# v1.1.0: ComfyUI calcula la RAM libre con psutil, que ve la RAM de TODA la máquina
+# (cientos de GB) y no el límite del contenedor (~46 GB en A40/A6000). Por eso nunca
+# liberaba memoria y los videos de 15 s morían por OOM. sitecustomize.py le hace ver
+# a psutil el límite real del contenedor (Python lo carga solo al arrancar).
+# ---------------------------------------------------------------------
+COPY sitecustomize.py /tmp/sitecustomize.py
+RUN /opt/venv/bin/python -c "import site, shutil; d = site.getsitepackages()[0]; shutil.copy('/tmp/sitecustomize.py', d); print('sitecustomize en', d)" \
+ && /opt/venv/bin/python -c "import psutil; print('psutil OK, RAM vista:', round(psutil.virtual_memory().total / 2**30, 1), 'GB')"
+
 WORKDIR /comfyui/models
 RUN mkdir -p diffusion_models loras text_encoders clip_vision vae checkpoints
 
